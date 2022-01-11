@@ -1,0 +1,21 @@
+---
+framework: jest
+postMerge:
+  env:
+      NODE_ENV: development
+  pattern:
+    - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
+preMerge:
+  env:
+    NODE_ENV: development
+  pattern:
+    - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
+preRun:
+  command:
+    - yarn
+postRun:
+  command:
+    - node --version
+configFile: scripts/jest/config.source-www.js
+tier: x-large
+version: 2.0

@@ -103,9 +103,6 @@
   "devEngines": {
     "node": "^12.17.0 || 13.x || 14.x || 15.x || 16.x"
   },
-  "jest": {
-    "testRegex": "/scripts/jest/dont-run-jest-directly\\.js$"
-  },
   "scripts": {
     "build": "node ./scripts/rollup/build.js",
     "build-combined": "node ./scripts/rollup/build-all-release-channels.js",
