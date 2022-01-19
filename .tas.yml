@@ -3,13 +3,19 @@ framework: jest
 postMerge:
   env:
       NODE_ENV: development
+      npm_lifecycle_event: test
   pattern:
-    - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
+    # - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
+    - "packages/use-sync-external-store/src/__tests__/useSyncExternalStoreShared-test.js"
+    - "packages/react/src/__tests__/ReactClassEquivalence-test.js"
 preMerge:
   env:
     NODE_ENV: development
+    npm_lifecycle_event: test
   pattern:
-    - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
+    # - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
+    - "packages/use-sync-external-store/src/__tests__/useSyncExternalStoreShared-test.js"
+    - "packages/react/src/__tests__/ReactClassEquivalence-test.js"
 preRun:
   command:
     - yarn
@@ -17,5 +23,5 @@ postRun:
   command:
     - node --version
 configFile: scripts/jest/config.source-www.js
-tier: x-large
+tier: xlarge
 version: 2.0
