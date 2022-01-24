@@ -18,12 +18,10 @@ preMerge:
     - "packages/react/src/__tests__/ReactClassEquivalence-test.js"
 preRun:
   command:
-    - nvm install 14.17.6
-    - nvm use 14.17.6
     - yarn
 postRun:
   command:
     - node --version
 configFile: scripts/jest/config.source-www.js
-tier: xlarge
+nodeVersion: 14.17.6
 version: 2.0
