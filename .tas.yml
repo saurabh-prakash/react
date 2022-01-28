@@ -5,17 +5,13 @@ postMerge:
       NODE_ENV: development
       npm_lifecycle_event: test
   pattern:
-    # - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
-    - "packages/use-sync-external-store/src/__tests__/useSyncExternalStoreShared-test.js"
-    - "packages/react/src/__tests__/ReactClassEquivalence-test.js"
+    - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
 preMerge:
   env:
     NODE_ENV: development
     npm_lifecycle_event: test
   pattern:
-    # - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
-    - "packages/use-sync-external-store/src/__tests__/useSyncExternalStoreShared-test.js"
-    - "packages/react/src/__tests__/ReactClassEquivalence-test.js"
+    - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
 preRun:
   command:
     - yarn
