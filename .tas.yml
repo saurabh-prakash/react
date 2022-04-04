@@ -1,0 +1,23 @@
+---
+framework: jest
+preRun:
+  command:
+    - yarn
+postMerge:
+  env:
+    NODE_ENV: development
+    npm_lifecycle_event: test
+  pattern:
+    - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
+preMerge:
+  env:
+    NODE_ENV: development
+    npm_lifecycle_event: test
+  pattern:
+    - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
+configFile: scripts/jest/config.source-www.js
+nodeVersion: 14.17.6
+postRun:
+  command:
+    - echo "Testing done"
+version: 1.0
