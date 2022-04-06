@@ -127,19 +127,22 @@ jobs:
     environment: *environment
     steps:
       - checkout
+      - run: yarn workspaces info | head -n -1 > workspace_info.txt
+      - *restore_node_modules
       - run:
           name: Download artifacts for base revision
-          # TODO: We can't use the normal download-build script here because it
-          # depends on the CircleCI artifacts API, which was recently changed to
-          # require authorization. And we can't pass an authorization token
-          # without possibly leaking it to the public, since we run sizebot on
-          # PRs from external contributors. As a temporary workaround, this job
-          # will pull the artifacts from a public mirror that I set up. But we
-          # should find some other solution so we don't have to maintain
-          # the mirror.
           command: |
-            curl -L --retry 60 --retry-delay 10 --retry-max-time 600 https://react-builds.vercel.app/api/commits/$(git merge-base HEAD origin/main)/artifacts/build.tgz | tar -xz
-            mv ./build ./base-build
+              git fetch origin main
+              cd ./scripts/release && yarn && cd ../../
+              scripts/release/download-experimental-build.js --commit=$(git merge-base HEAD origin/main)
+              mv ./build ./base-build
+      - run:
+          # TODO: The `download-experimental-build` script copies the npm
+          # packages into the `node_modules` directory. This is a historical
+          # quirk of how the release script works. Let's pretend they
+          # don't exist.
+          name: Delete extraneous files
+          command: rm -rf ./base-build/node_modules
 
       - persist_to_workspace:
           root: .
@@ -255,11 +258,10 @@ jobs:
           command: |
             yarn extract-errors
             git diff || (echo "Found unminified errors. Either update the error codes map or disable error minification for the affected build, if appropriate." && false)
-
   yarn_test:
     docker: *docker
     environment: *environment
-    parallelism: *TEST_PARALLELISM
+    # parallelism: *TEST_PARALLELISM
     parameters:
       args:
         type: string
@@ -305,7 +307,6 @@ jobs:
             yarn --frozen-lockfile
             yarn prestart
             yarn test --maxWorkers=2
-
   test_fuzz:
     docker: *docker
     environment: *environment
@@ -318,7 +319,6 @@ jobs:
           command: |
             FUZZ_TEST_SEED=$RANDOM yarn test fuzz --ci
             FUZZ_TEST_SEED=$RANDOM yarn test --prod fuzz --ci
-
   publish_prerelease:
     parameters:
       commit_sha:
@@ -341,7 +341,6 @@ jobs:
             scripts/release/prepare-release-from-ci.js --skipTests -r << parameters.release_channel >> --commit=<< parameters.commit_sha >>
             cp ./scripts/release/ci-npmrc ~/.npmrc
             scripts/release/publish.js --ci --tags << parameters.dist_tag >>
-
   # We don't always keep the reconciler forks in sync (otherwise it we wouldn't
   # have forked it) but during periods when they are meant to be in sync, we
   # use this job to confirm there are no differences.
@@ -357,8 +356,6 @@ jobs:
           command: |
             yarn replace-fork
             git diff --quiet || (echo "Reconciler forks are not the same! Run yarn replace-fork. Or, if this was intentional, disable this CI check." && false)
-
-
 workflows:
   version: 2
 
@@ -388,21 +385,21 @@ workflows:
                 # separate parameter per CLI argument, since it's easier to
                 # control/see which combinations we want to run.
                 - "-r=stable --env=development"
-                - "-r=stable --env=production"
-                - "-r=experimental --env=development"
-                - "-r=experimental --env=production"
-                - "-r=www-classic --env=development --variant=false"
-                - "-r=www-classic --env=production --variant=false"
-                - "-r=www-classic --env=development --variant=true"
-                - "-r=www-classic --env=production --variant=true"
-                - "-r=www-modern --env=development --variant=false"
-                - "-r=www-modern --env=production --variant=false"
-                - "-r=www-modern --env=development --variant=true"
-                - "-r=www-modern --env=production --variant=true"
+                # - "-r=stable --env=production"
+                # - "-r=experimental --env=development"
+                # - "-r=experimental --env=production"
+                # - "-r=www-classic --env=development --variant=false"
+                # - "-r=www-classic --env=production --variant=false"
+                # - "-r=www-classic --env=development --variant=true"
+                # - "-r=www-classic --env=production --variant=true"
+                # - "-r=www-modern --env=development --variant=false"
+                # - "-r=www-modern --env=production --variant=false"
+                # - "-r=www-modern --env=development --variant=true"
+                # - "-r=www-modern --env=production --variant=true"
 
                 # TODO: Test more persistent configurations?
-                - '-r=stable --env=development --persistent'
-                - '-r=experimental --env=development --persistent'
+                # - '-r=stable --env=development --persistent'
+                # - '-r=experimental --env=development --persistent'
       - yarn_build_combined:
           requires:
             - setup
@@ -546,4 +543,3 @@ workflows:
           commit_sha: << pipeline.git.revision >>
           release_channel: experimental
           dist_tag: experimental
-
