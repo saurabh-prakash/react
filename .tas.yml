@@ -13,7 +13,12 @@ preMerge:
     - "{packages,scripts}/**/__tests__/*{.js,.coffee,[!d].ts}"
 preRun:
   command:
-    - yarn
+    - |
+      if [ -d "~/repo/node_modules" ]; then
+        yarn install --frozen-lockfile
+      else
+        yarn install
+      fi
 postRun:
   command:
     - node --version
