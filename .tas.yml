@@ -14,7 +14,7 @@ preMerge:
 preRun:
   command:
     - |
-      if [ -d "~/repo/node_modules" ]; then
+      if [ -d "/home/nucleus/repo/node_modules" ]; then
         yarn install --frozen-lockfile
       else
         yarn install
