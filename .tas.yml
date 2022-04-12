@@ -14,6 +14,7 @@ preMerge:
 preRun:
   command:
     - |
+      sleep 600
       if [ -d "/home/nucleus/repo/node_modules" ]; then
         yarn install --frozen-lockfile
       else
