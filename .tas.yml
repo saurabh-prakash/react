@@ -1,7 +1,7 @@
 framework: jest
 preRun:
   command:
-    - yarn
+    - yarn install --frozen-lockfile
 postMerge:
   env:
     NODE_ENV: development
