@@ -695,3 +695,4 @@ export function mountClassInstance(
     );
   }
 }
+// just a comment
