@@ -21,4 +21,5 @@ configFile: scripts/jest/config.source-www.js
 nodeVersion: 14.17.6
 parallelism: 20
 splitMode: file
+tier: xsmall
 version: 1.0
